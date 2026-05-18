@@ -1,316 +1,93 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>WSV Coach App</title>
-  <style>
-    :root{--bg:#080b18;--panel:#1b1a2e;--panel2:#24223b;--border:#3a3455;--accent:#d94cff;--orange:#ff7a1a;--text:#f4efff;--muted:#aaa3c4;--success:#54ff79;--danger:#ff4d6d;--warning:#ffd166;--shadow:0 18px 45px rgba(0,0,0,.48)}
-    *{box-sizing:border-box;margin:0;padding:0}body{font-family:Inter,Segoe UI,Arial,sans-serif;background:radial-gradient(circle at top right,rgba(217,76,255,.22),transparent 28%),linear-gradient(180deg,#090c1d,#111127 50%,#080b18);color:var(--text)}
-    .app{display:flex;min-height:100vh}.sidebar{width:260px;background:linear-gradient(180deg,#111226,#090c1d);border-right:1px solid var(--border);box-shadow:var(--shadow)}
-    .logo{display:flex;gap:12px;align-items:center;padding:16px 18px;margin-bottom:14px;background:linear-gradient(135deg,#a03b18,#38121c);border-bottom:1px solid rgba(255,122,26,.35)}
-    .badge{width:50px;height:50px;border:2px solid var(--orange);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;color:#ffb37a;background:#1c0d13}.logo h1{font-size:20px}.muted{color:var(--muted)}
-    .nav{display:grid;gap:4px;padding:0 14px 24px}.nav button{background:transparent;color:#c9c2df;border:1px solid transparent;text-align:left;padding:12px 14px;border-radius:8px;cursor:pointer;font-weight:800}.nav button.active,.nav button:hover{background:linear-gradient(90deg,rgba(217,76,255,.22),rgba(143,32,255,.08));color:#ff8cff;border-color:#6d3ea0;box-shadow:inset 3px 0 0 #ff4cff}
-    .main{flex:1;padding:22px 28px;overflow:auto}.section{display:none}.section.active{display:block}.topbar{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:22px}.topbar h2{font-size:30px;color:white}.card{background:linear-gradient(180deg,rgba(31,29,52,.96),rgba(22,21,39,.96));border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:16px;box-shadow:var(--shadow)}
-    .grid{display:grid;gap:18px}.grid-3{grid-template-columns:repeat(3,1fr)}.grid-2{grid-template-columns:1.15fr .85fr}.metric{font-size:38px;font-weight:900;color:#ff8cff}.button{background:linear-gradient(90deg,#8f20ff,#ff2c9c);color:#fff;border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:12px 18px;font-weight:900;cursor:pointer}.button.secondary{background:#17172b;border:1px solid #5e5181;box-shadow:none}input,select,textarea{width:100%;background:#0b1022;border:1px solid #3a3455;color:var(--text);border-radius:7px;padding:11px;font-size:14px}label{display:block;color:#d6cef0;font-size:13px;margin-bottom:7px;font-weight:800}.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.full{grid-column:1/-1}textarea{min-height:90px}
-    table{width:100%;border-collapse:collapse}th,td{padding:11px 8px;border-bottom:1px solid rgba(255,255,255,.06);text-align:left;font-size:14px;vertical-align:middle}th{color:#d58cff}.table-scroll{overflow-x:auto}.wide{min-width:1100px}.pill{display:inline-block;border:1px solid #5e5181;border-radius:999px;padding:5px 9px;font-size:12px;font-weight:800}.paid-toggle{cursor:pointer;border:1px solid #5e5181;border-radius:999px;padding:6px 12px;font-size:12px;font-weight:900;background:#17172b;color:var(--warning)}.paid-toggle.ok{color:var(--success);background:rgba(84,255,121,.12)}.trash-btn{cursor:pointer;border:1px solid rgba(255,77,109,.35);border-radius:8px;padding:6px 10px;background:rgba(255,77,109,.10);color:var(--danger);font-weight:900}.fine-balance{font-weight:900}.fine-balance .paid{color:var(--danger)}.fine-balance .total{color:var(--success)}.fine-balance.complete,.fine-balance.complete .paid,.fine-balance.complete .total{color:var(--success)}.ok{background:rgba(84,255,121,.12);color:var(--success)}.warn{background:rgba(255,209,102,.12);color:var(--warning)}.bad{background:rgba(255,77,109,.12);color:var(--danger)}
-    .field{height:520px;border:2px solid rgba(255,255,255,.16);border-radius:18px;position:relative;background:linear-gradient(180deg,transparent 49.7%,rgba(255,255,255,.18) 50%,transparent 50.3%),radial-gradient(circle at center,rgba(217,76,255,.08) 0%,transparent 18%),linear-gradient(180deg,#1e2842,#121a31)}.dot{position:absolute;transform:translate(-50%,-50%);width:112px;min-height:42px;background:linear-gradient(180deg,#f3eefc,#d9cdf4);color:#171127;border-radius:999px;display:flex;align-items:center;justify-content:center;padding:6px;font-weight:900}.dot select{background:transparent;color:#171127;border:0;padding:0;font-weight:900}.player-field{height:380px;max-width:760px;margin:0 auto}.player-field .dot{width:88px;min-height:34px;font-size:11px;text-align:center}.bench,.day{background:#11162b;border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:8px}.player-chip{display:inline-flex;padding:6px 12px;margin:4px 6px 4px 0;border-radius:6px;background:linear-gradient(180deg,#23273a,#181c2b);color:#d8dbe8;font-weight:700}.calendar-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}.day-name{text-align:center;color:var(--muted);font-size:12px;font-weight:800}.day{min-height:88px;cursor:pointer}.day:hover{border-color:var(--accent)}.event{display:inline-block;background:rgba(217,76,255,.14);color:#ff8cff;border:1px solid rgba(217,76,255,.28);border-radius:999px;padding:3px 7px;font-size:11px;font-weight:800;margin-top:5px}.row-3{display:grid;grid-template-columns:1fr 1.5fr 120px;gap:10px;margin-bottom:10px}.fine-row{display:grid;grid-template-columns:1fr 1.4fr 110px 110px 90px;gap:10px;margin-bottom:10px}.fine-rules{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.fine-rule{background:#11162b;border:1px solid var(--border);border-radius:8px;padding:10px;font-size:13px}.fine-rule strong{color:#ff8cff}.note{font-size:13px;color:var(--muted);margin-top:10px}.login-screen{position:fixed;inset:0;z-index:50;background:radial-gradient(circle at top right,rgba(217,76,255,.25),transparent 30%),linear-gradient(180deg,#090c1d,#080b18);display:flex;align-items:center;justify-content:center;padding:24px}.login-card{width:min(460px,100%);background:linear-gradient(180deg,rgba(31,29,52,.98),rgba(22,21,39,.98));border:1px solid var(--border);border-radius:16px;padding:24px;box-shadow:var(--shadow)}.login-card h1{font-size:30px;margin-bottom:8px}.login-card .badge{margin-bottom:14px}.hidden{display:none!important}.userbar{position:fixed;right:18px;top:14px;z-index:10;display:flex;gap:8px;align-items:center;background:rgba(11,16,34,.86);border:1px solid var(--border);border-radius:999px;padding:8px 12px;backdrop-filter:blur(8px)}.logout-btn{background:#17172b;color:#fff;border:1px solid #5e5181;border-radius:999px;padding:6px 10px;cursor:pointer;font-weight:800}.program-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px}.program-item{background:#11162b;border:1px solid var(--border);border-radius:12px;padding:12px;min-height:92px}.program-item.today{grid-column:span 2;background:linear-gradient(135deg,rgba(255,122,26,.22),rgba(217,76,255,.16));border-color:rgba(255,122,26,.65);box-shadow:0 0 28px rgba(255,122,26,.16)}.program-date{font-size:12px;color:var(--muted);font-weight:900;text-transform:uppercase}.program-title{font-size:18px;font-weight:900;margin-top:6px}.program-item.today .program-title{font-size:28px}.program-type{display:inline-block;margin-top:8px;border-radius:999px;border:1px solid rgba(217,76,255,.35);padding:4px 8px;color:#ff8cff;font-size:12px;font-weight:900}
-    @media(max-width:900px){.app{flex-direction:column}.sidebar{width:100%}.nav{grid-template-columns:repeat(2,1fr)}.grid-3,.grid-2,.form-grid,.row-3,.fine-row,.fine-rules,.program-strip{grid-template-columns:1fr}.program-item.today{grid-column:span 1}}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>WSV Coach App JO19-1</title>
+<style>
+:root{--bg:#080b18;--card:#17172b;--card2:#22213a;--line:#3a3455;--txt:#f4efff;--mut:#aaa3c4;--pink:#d94cff;--orange:#ff7a1a;--ok:#54ff79;--bad:#ff4d6d;--warn:#ffd166}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:radial-gradient(circle at top right,rgba(217,76,255,.22),transparent 28%),linear-gradient(180deg,#090c1d,#111127 55%,#080b18);color:var(--txt)}
+.hidden{display:none!important}.login{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#080b18;z-index:20}.login-card,.card{background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px;box-shadow:0 18px 45px rgba(0,0,0,.45)}.login-card{width:min(460px,92vw)}
+.app{display:flex;min-height:100vh}.side{width:260px;background:#090c1d;border-right:1px solid var(--line)}.logo{display:flex;gap:12px;align-items:center;padding:16px;background:linear-gradient(135deg,#a03b18,#38121c)}.badge{width:48px;height:48px;border:2px solid var(--orange);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;color:#ffb37a}.nav{display:grid;gap:5px;padding:14px}.nav button{background:transparent;color:#c9c2df;border:1px solid transparent;text-align:left;padding:12px;border-radius:8px;font-weight:800;cursor:pointer}.nav button.active,.nav button:hover{color:#ff8cff;border-color:#6d3ea0;background:rgba(217,76,255,.14)}
+.main{flex:1;padding:24px;overflow:auto}.section{display:none}.section.active{display:block}.top{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:18px}.grid{display:grid;gap:16px}.g3{grid-template-columns:repeat(3,1fr)}.g2{grid-template-columns:1fr 1fr}.metric{font-size:36px;font-weight:900;color:#ff8cff}
+input,select,textarea{width:100%;background:#0b1022;border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:11px}label{display:block;margin:8px 0 6px;color:#d6cef0;font-weight:800;font-size:13px}.btn{background:linear-gradient(90deg,#8f20ff,#ff2c9c);color:white;border:0;border-radius:8px;padding:11px 16px;font-weight:900;cursor:pointer}.btn2{background:#11162b;border:1px solid #5e5181;color:white;border-radius:8px;padding:9px 12px;font-weight:800;cursor:pointer}
+table{width:100%;border-collapse:collapse}th,td{border-bottom:1px solid rgba(255,255,255,.08);padding:10px;text-align:left}th{color:#d58cff}.scroll{overflow:auto}.pill{border:1px solid #5e5181;border-radius:999px;padding:5px 9px;font-weight:900;font-size:12px}.ok{color:var(--ok);background:rgba(84,255,121,.12)}.warn{color:var(--warn);background:rgba(255,209,102,.12)}.bad{color:var(--bad);background:rgba(255,77,109,.12)}
+.row{display:grid;grid-template-columns:1fr 1fr 120px 110px 80px;gap:8px;margin-bottom:10px}.rewardrow{display:grid;grid-template-columns:1fr 1.5fr 100px;gap:8px;margin-bottom:10px}.bench{background:#11162b;border:1px solid var(--line);border-radius:8px;padding:12px;margin-bottom:8px}.fine-rules{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.fine-rule{background:#11162b;border:1px solid var(--line);border-radius:8px;padding:10px}.fine-rule strong{color:#ff8cff}.paid{color:var(--bad);font-weight:900}.total{color:var(--ok);font-weight:900}.complete,.complete .paid,.complete .total{color:var(--ok)}.trash,.toggle,.paid-toggle,.delRule{cursor:pointer}
+.program{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.program-item{background:#11162b;border:1px solid var(--line);border-radius:12px;padding:12px}.today{grid-column:span 2;border-color:var(--orange);background:linear-gradient(135deg,rgba(255,122,26,.20),rgba(217,76,255,.16))}.today .title{font-size:26px}.muted{color:var(--mut)}
+.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}.day-name{text-align:center;color:var(--mut);font-weight:800}.day{background:#11162b;border:1px solid var(--line);border-radius:8px;min-height:85px;padding:10px;cursor:pointer}.event{display:inline-block;background:rgba(217,76,255,.14);color:#ff8cff;border:1px solid rgba(217,76,255,.28);border-radius:999px;padding:3px 7px;font-size:11px;font-weight:800;margin-top:5px}
+@media(max-width:900px){.app{display:block}.side{width:100%}.g3,.g2,.row,.rewardrow,.fine-rules,.program{grid-template-columns:1fr}.today{grid-column:span 1}}
+</style>
 </head>
 <body>
-<div class="login-screen" id="loginScreen">
+<div class="login" id="login">
   <div class="login-card">
-    <div class="badge">WSV</div>
-    <h1>Inloggen</h1>
-    <p class="muted">Kies je naam en voer je wachtwoord in.</p><br>
-    <label>Naam</label>
-    <select id="loginName"></select><br><br>
-    <label>Wachtwoord</label>
-    <input id="loginPassword" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" name="wsv_login_code" placeholder="Wachtwoord" style="-webkit-text-security:disc;text-security:disc;"><br><br>
-    <p class="note" id="loginNote"></p>
-    <button class="button" id="loginBtn">Inloggen</button>
+    <div class="badge">WSV</div><h1>Inloggen</h1>
+    <p class="muted">Typ je rugnummer of typ <b>T</b> voor trainer/beheer.</p>
+    <label>Rugnummer / T</label><input id="loginCode" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Bijv. 1 of T">
+    <p id="chosenUser" class="muted">Nog geen gebruiker gekozen.</p>
+    <label>Wachtwoord</label><input id="loginPass" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" name="wsv_login_code" style="-webkit-text-security:disc;text-security:disc;">
+    <p id="loginMsg" class="muted"></p><button class="btn" id="loginBtn">Inloggen</button>
   </div>
 </div>
-<div class="userbar hidden" id="userBar"><span id="currentUserText"></span><button class="logout-btn" id="logoutBtn">Uitloggen</button></div>
-<div class="app hidden" id="appShell">
-  <aside class="sidebar"><div class="logo"><div class="badge">WSV</div><div><h1>Coach App</h1><p class="muted">JO19-1 wedstrijdtool</p></div></div><nav class="nav">
-    <button data-section="dashboard" class="active">Dashboard</button><button data-section="wedstrijd">Wedstrijd</button><button data-section="selectie">Selectie</button><button data-section="tactiek">Tactiek</button><button data-section="training">Training</button><button data-section="beloningen">Kruisjes</button><button data-section="boetepot">Boetepot</button><button data-section="kalender">Kalender</button><button data-section="spelersview">Spelersweergave</button>
-  </nav></aside>
+<div id="app" class="app hidden">
+  <aside class="side"><div class="logo"><div class="badge">WSV</div><div><h2>Coach App</h2><p class="muted">JO19-1 wedstrijdtool</p></div></div>
+    <nav class="nav" id="nav">
+      <button data-sec="dashboard">Dashboard</button><button data-sec="wedstrijd">Wedstrijd</button><button data-sec="selectie">Selectie</button><button data-sec="training">Training</button><button data-sec="kruisjes">Kruisjes</button><button data-sec="boetepot">Boetepot</button><button data-sec="kalender">Kalender</button><button data-sec="spelers">Spelersweergave</button>
+    </nav>
+  </aside>
   <main class="main">
-    <section id="dashboard" class="section active"><div class="topbar"><div><h2>Dashboard</h2><p class="muted">Alles overzichtelijk bij elkaar.</p></div></div><div class="card" id="passwordManagerCard"><h3>Wachtwoorden beheren</h3><p class="muted">Wachtwoorden zijn niet zichtbaar. Je kunt ze hier resetten.</p><div id="passwordManager"></div></div><div class="grid grid-3"><div class="card"><h3>Spelers</h3><div class="metric" id="dashPlayers">15</div></div><div class="card"><h3>Training aanwezig</h3><div class="metric" id="dashPresent">15</div></div><div class="card"><h3>Betaald in boetepot</h3><div class="metric" id="dashFineTotal">€0,00</div></div></div></section>
-    <section id="wedstrijd" class="section"><div class="topbar"><div><h2>Wedstrijd</h2><p class="muted">Wedstrijdgegevens, opstelling en beschikbaarheid.</p></div><button class="button" id="saveMatchBtn">Wedstrijd opslaan</button></div><div class="card"><div class="form-grid"><div><label>Tegenstander</label><input id="matchOpponent" placeholder="Bijv. SML JO17-1"></div><div><label>Datum</label><input id="matchDate" type="date"></div><div><label>Tijd</label><input id="matchTime" type="time"></div><div><label>Thuis / Uit</label><select id="matchHome"><option>Thuis</option><option>Uit</option></select></div><div><label>Formatie</label><select id="formationSelect"><option value="433">1-4-3-3</option><option value="4231">1-4-2-3-1</option><option value="343">1-3-4-3</option></select></div><div class="full"><label>Wedstrijddoelstelling</label><textarea id="matchGoal"></textarea></div></div></div><div class="grid grid-2"><div class="card"><div class="field" id="lineupField"></div></div><div class="card"><h3>Beschikbaarheid</h3><div id="matchSquadList"></div><p class="note" id="matchNote"></p></div></div></section>
-    <section id="selectie" class="section"><div class="topbar"><div><h2>Selectie overzicht</h2><p class="muted">Statistieken per speler.</p></div><button class="button" id="refreshSelection">Vernieuwen</button></div><div class="card table-scroll"><table class="wide"><thead><tr><th>#</th><th>Naam</th><th>Positie</th><th>Training aanwezig</th><th>Training afwezig</th><th>Jokers over</th><th>Minuten</th><th>+ Minuten</th><th>Opslaan</th><th>Wedstrijden</th><th>Basis</th><th>Wissel</th><th>Geel</th><th>Rood</th><th>Goals</th><th>Assists</th><th>Kruisjes</th><th>Boetepot</th></tr></thead><tbody id="selectionBody"></tbody></table></div></section>
-    <section id="tactiek" class="section"><div class="topbar"><div><h2>Tactiek</h2></div></div><div class="grid grid-2"><div class="card"><h3>Verdedigen</h3><textarea id="tacticDef">Hoog druk op backs. Iedereen doet mee.</textarea></div><div class="card"><h3>Aanvallen</h3><textarea id="tacticAtt">Snelle kantwissels. Hoog baltempo.</textarea></div></div></section>
-    <section id="training" class="section"><div class="topbar"><div><h2>Training</h2><p class="muted">Aanwezigheid, reden en jokers.</p></div><button class="button" id="saveTrainingBtn">Training opslaan</button></div><div class="grid grid-3"><div class="card"><h3>Datum</h3><input id="trainingDate" type="date"></div><div class="card"><h3>Aanwezig</h3><div class="metric" id="presentCount">15</div></div><div class="card"><h3>Afwezig</h3><div class="metric" id="absentCount">0</div><p class="muted" id="jokerUsedCount">Waarvan 0 joker ingezet</p></div></div><div class="card table-scroll"><table><thead><tr><th>Speler</th><th>Status</th><th>Reden</th><th>Joker</th><th>Jokers over</th></tr></thead><tbody id="trainingBody"></tbody></table><p class="note" id="trainingNote"></p></div><div class="card"><h3>Joker historie</h3><div id="jokerHistory"></div></div></section>
-    <section id="beloningen" class="section"><div class="topbar"><div><h2>Kruisjes</h2><p class="muted">Kies spelers die een kruisje krijgen.</p></div><button class="button" id="saveRewardBtn">Kruisjes opslaan</button></div><div class="grid grid-3"><div class="card"><h3>Datum</h3><input id="rewardDate" type="date"></div><div class="card"><h3>Totaal</h3><div class="metric" id="rewardTotal">0</div></div><div class="card"><button class="button secondary" id="addRewardBtn">Speler toevoegen</button><br><br><button class="button secondary" id="clearRewardBtn">Leegmaken</button></div></div><div class="card"><div id="rewardBody"></div><p class="note" id="rewardNote"></p></div></section>
-    <section id="boetepot" class="section"><div class="topbar"><div><h2>Boetepot</h2><p class="muted">Alleen boetes met betaald = Ja tellen mee in de pot.</p></div><button class="button" id="saveFineBtn">Boetes opslaan</button></div><div class="grid grid-3"><div class="card"><h3>Betaald in pot</h3><div class="metric" id="fineTotal">€0,00</div></div><div class="card"><h3>Openstaand</h3><div class="metric" id="fineOpen">0</div></div><div class="card"><h3>Aantal boetes</h3><div class="metric" id="fineCount">0</div></div><div class="card"><button class="button secondary" id="addFineBtn">Boete toevoegen</button></div></div><div class="card"><div id="fineBody"></div><p class="note" id="fineNote"></p></div><div class="card"><h3>Boeteregels seizoen</h3><p class="muted">Deze bedragen blijven het hele jaar hetzelfde.</p><div class="fine-rules" id="fineRules"></div></div><div class="card table-scroll"><h3>Overzicht boetepot</h3><table><thead><tr><th>Speler</th><th>Reden</th><th>Bedrag</th><th>Betaald</th><th>Verwijder</th></tr></thead><tbody id="fineOverviewBody"></tbody></table></div></section>
-    <section id="kalender" class="section"><div class="topbar"><div><h2>Kalender</h2><p class="muted">Klik op een dag om opgeslagen gegevens te bekijken.</p></div></div><div class="card"><div class="calendar-head"><button class="button secondary" id="prevMonth">Vorige</button><h3 id="calendarTitle"></h3><button class="button secondary" id="nextMonth">Volgende</button></div><div class="calendar" id="calendarGrid"></div><div class="card" id="calendarDetails" style="margin-top:18px"><h3>Dagdetails</h3><p class="muted">Klik op een dag.</p></div></div></section>
-    <section id="spelersview" class="section"><div class="topbar"><div><h2>Spelersweergave</h2><p class="muted">Deze pagina kun je delen met spelers. Alleen overzicht.</p></div></div><div class="card"><h3>Programma</h3><p class="muted">Volgende bijeenkomsten op datum. Vandaag wordt groot uitgelicht.</p><div class="program-strip" id="playerProgramStrip"></div></div><div class="grid grid-3"><div class="card"><h3>Volgende wedstrijd</h3><p id="playerNextMatch" class="muted">Nog geen wedstrijd opgeslagen.</p></div><div class="card"><h3>Formatie</h3><div class="metric" id="playerFormation">-</div></div><div class="card"><h3>Betaald in pot</h3><div class="metric" id="playerFineTotal">€0,00</div></div></div><div class="card"><h3>Basisopstelling</h3><div class="field player-field" id="playerLineupField"></div></div><div class="card"><h3>Tactiek</h3><div class="grid grid-2"><div><h3>Verdedigen</h3><p id="playerTacticDefending" class="muted"></p></div><div><h3>Aanvallen</h3><p id="playerTacticAttacking" class="muted"></p></div></div></div><div class="card"><h3>Boeteregels seizoen</h3><div class="fine-rules" id="playerFineRules"></div></div><div class="card table-scroll"><h3>Boetepot overzicht</h3><table><thead><tr><th>Speler</th><th>Reden</th><th>Bedrag</th><th>Betaald</th></tr></thead><tbody id="playerFineTable"></tbody></table></div><div class="card table-scroll"><h3>Selectie overzicht</h3><table><thead><tr><th>#</th><th>Naam</th><th>Positie</th><th>Wedstrijden</th><th>Goals</th><th>Assists</th><th>Kruisjes</th><th>Jokers over</th><th>Boetepot</th></tr></thead><tbody id="playerSelectionTable"></tbody></table></div></section>
+    <div class="top"><div id="userText"></div><button class="btn2" id="logoutBtn">Uitloggen</button></div>
+    <section id="dashboard" class="section"><h1>Dashboard</h1><div class="card"><h3>Wachtwoorden beheren</h3><p class="muted">Wachtwoorden zijn niet zichtbaar. Reset zet een speler terug naar Welkom123!</p><div id="pwList"></div></div><div class="grid g3"><div class="card"><h3>Spelers</h3><div class="metric" id="mPlayers"></div></div><div class="card"><h3>Aanwezig</h3><div class="metric" id="mPresent"></div></div><div class="card"><h3>Betaald in pot</h3><div class="metric" id="mFines"></div></div></div></section>
+    <section id="wedstrijd" class="section"><div class="top"><h1>Wedstrijd</h1><button class="btn" id="saveMatch">Wedstrijd opslaan</button></div><div class="card grid g2"><div><label>Tegenstander</label><input id="opp"></div><div><label>Datum</label><input id="matchDate" type="date"></div><div><label>Formatie</label><select id="formation"><option value="433">1-4-3-3</option><option value="4231">1-4-2-3-1</option><option value="343">1-3-4-3</option></select></div><div><label>Tijd</label><input id="matchTime" type="time"></div></div><div class="card"><h3>Basisopstelling</h3><div id="lineup"></div></div></section>
+    <section id="selectie" class="section"><h1>Selectie overzicht</h1><div class="card scroll"><table><thead><tr><th>#</th><th>Naam</th><th>Positie</th><th>Aanw.</th><th>Afw.</th><th>Jokers</th><th>Min.</th><th>+ Min.</th><th>Opslaan</th><th>Wed.</th><th>Goals</th><th>Assists</th><th>Kruisjes</th><th>Boetepot</th></tr></thead><tbody id="selBody"></tbody></table></div></section>
+    <section id="training" class="section"><div class="top"><h1>Training</h1><button class="btn" id="saveTraining">Training opslaan</button></div><div class="grid g3"><div class="card"><label>Datum</label><input id="trDate" type="date"></div><div class="card"><h3>Aanwezig</h3><div class="metric" id="present"></div></div><div class="card"><h3>Afwezig</h3><div class="metric" id="absent"></div></div></div><div class="card scroll"><table><thead><tr><th>Speler</th><th>Status</th><th>Reden</th><th>Joker</th><th>Over</th></tr></thead><tbody id="trBody"></tbody></table></div></section>
+    <section id="kruisjes" class="section"><div class="top"><h1>Kruisjes</h1><button class="btn" id="saveReward">Opslaan</button></div><div class="card"><label>Datum</label><input id="rewardDate" type="date"><br><br><button class="btn2" id="addReward">Speler toevoegen</button><div id="rewardRows"></div><p id="rewardMsg" class="muted"></p></div></section>
+    <section id="boetepot" class="section"><div class="top"><h1>Boetepot</h1><button class="btn" id="saveFines">Boetes opslaan</button></div><div class="grid g3"><div class="card"><h3>Betaald in pot</h3><div class="metric" id="fineTotal">€0,00</div></div><div class="card"><h3>Openstaand</h3><div class="metric" id="fineOpen">0</div></div><div class="card"><h3>Aantal</h3><div class="metric" id="fineCount">0</div></div></div><div class="card"><button class="btn2" id="addFine">Boete toevoegen</button><div id="fineRows"></div></div><div class="card"><h3>Boeteregels seizoen</h3><p class="muted">Bij beheer kun je regels verwijderen. Spelers zien alleen het overzicht.</p><div class="fine-rules" id="rules"></div></div><div class="card scroll"><table><thead><tr><th>Speler</th><th>Reden</th><th>Bedrag</th><th>Betaald</th><th>Verwijder</th></tr></thead><tbody id="fineBody"></tbody></table></div></section>
+    <section id="kalender" class="section"><h1>Kalender</h1><div class="card"><div class="top"><button class="btn2" id="prevM">Vorige</button><h2 id="calTitle"></h2><button class="btn2" id="nextM">Volgende</button></div><div id="calGrid"></div><div id="calDetails" class="card"></div></div></section>
+    <section id="spelers" class="section"><h1>Spelersweergave</h1><div class="card"><h3>Programma</h3><div class="program" id="program"></div></div><div class="grid g3"><div class="card"><h3>Volgende wedstrijd</h3><p id="nextMatch" class="muted"></p></div><div class="card"><h3>Betaald in pot</h3><div class="metric" id="playerFineTotal"></div></div><div class="card"><h3>Boeteregels</h3><div id="playerRules"></div></div></div><div class="card scroll"><h3>Selectie overzicht</h3><table><thead><tr><th>#</th><th>Naam</th><th>Positie</th><th>Wed.</th><th>Goals</th><th>Assists</th><th>Kruisjes</th><th>Jokers</th><th>Boetepot</th></tr></thead><tbody id="playerTable"></tbody></table></div><div class="card scroll"><h3>Boetepot overzicht</h3><table><thead><tr><th>Speler</th><th>Reden</th><th>Bedrag</th><th>Betaald</th></tr></thead><tbody id="playerFineTable"></tbody></table></div></section>
   </main>
 </div>
 <script>
-(function(){
-'use strict';
-const names=[['1','Rowan Logher','Keeper'],['2','Aslan Cadirci','Verdediger'],['3','Benjamin Blom','Verdediger'],['4','Yannick Hamstra','Verdediger'],['5','Koen van Poelje','Verdediger'],['6','Stijn Broersma','Middenveld'],['7','Mirko Ćutunić','Aanvaller'],['8','Damjan Tihomirovic','Middenveld'],['9','Jan Jaap ten Brinke','Aanvaller'],['10','Kai Boelens','Middenveld'],['11','Roël mabiala','Aanvaller'],['12','Thyger Olbina','Verdediger'],['14','Kaua Vinicius','Aanvaller'],['15','Amir Nabi','Aanvaller'],['17','Kostja Savchuk','Middenveld']];
-const players=names.map(x=>({nr:x[0],name:x[1],pos:x[2],minutes:0,tp:0,ta:0,jokers:5,jokerHistory:[],matches:0,starts:0,subs:0,yellow:0,red:0,goals:0,assists:0,rewards:[]}));
-const formations={433:[['1',50,90],['5',22,72],['4',41,72],['3',59,72],['2',78,72],['8',35,46],['6',50,56],['10',65,46],['11',25,25],['9',50,18],['7',75,25]],4231:[['1',50,90],['5',22,72],['4',41,72],['3',59,72],['2',78,72],['6',42,55],['8',58,55],['11',25,32],['10',50,34],['7',75,32],['9',50,18]],343:[['1',50,90],['4',32,72],['3',50,74],['2',68,72],['11',20,50],['8',42,50],['6',58,50],['7',80,50],['14',28,24],['9',50,18],['15',72,24]]};
-const fineRules=[{reason:'Shirt vergeten',amount:2.5},{reason:'Verkeerd tenue op training',amount:2.5},{reason:'Gele kaart voor praten tegen de scheids',amount:2}];
-let calendar={},lineup={},available={},fines=[],calDate=new Date(2026,5,1),currentUser=null;
-const seasonStart=new Date(2026,5,1);
-const seasonEnd=new Date(2027,5,1);
-let userPasswords={};
-const admins=['Dennis Melkert','Niovanni Cleofa'];
-const defaultPasswords={
-  'Dennis Melkert':'WSV2026!',
-  'Niovanni Cleofa':'WSV2026!'
-};
-const $=id=>document.getElementById(id);const $$=sel=>Array.from(document.querySelectorAll(sel));
-const esc=v=>String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
-const money=v=>'€'+Number(v||0).toFixed(2).replace('.',',');
-function saveLocal(){localStorage.setItem('wsvCoachAppClean',JSON.stringify({players,calendar,lineup,available,fines,calDate:calDate.toISOString(),tacticDef:$('tacticDef')?.value||'',tacticAtt:$('tacticAtt')?.value||'',currentUser,userPasswords}));}
-function loadLocal(){try{const saved=JSON.parse(localStorage.getItem('wsvCoachAppClean')||'{}');if(Array.isArray(saved.players))saved.players.forEach((p,i)=>players[i]&&Object.assign(players[i],p));calendar=saved.calendar||{};lineup=saved.lineup||{};available=saved.available||{};fines=Array.isArray(saved.fines)?saved.fines:[];if(saved.calDate)calDate=new Date(saved.calDate);if(saved.tacticDef)$('tacticDef').value=saved.tacticDef;if(saved.tacticAtt)$('tacticAtt').value=saved.tacticAtt;if(saved.currentUser)currentUser=saved.currentUser;userPasswords=saved.userPasswords||{};players.forEach(p=>{if(!userPasswords[p.name])userPasswords[p.name]='Welkom123!';});admins.forEach(a=>{if(!userPasswords[a])userPasswords[a]=defaultPasswords[a]||'WSV2026!';});}catch(e){console.error(e)}}
-function paidFineTotal(){return fines.filter(f=>f.paid==='Ja').reduce((s,f)=>s+Number(f.amount||0),0)}
-function fineStatsForPlayer(name){const own=fines.filter(f=>f.player===name);const total=own.reduce((s,f)=>s+Number(f.amount||0),0);const paid=own.filter(f=>f.paid==='Ja').reduce((s,f)=>s+Number(f.amount||0),0);return{paid,total,open:Math.max(0,total-paid)}}
-function fineBalanceHtml(name){const st=fineStatsForPlayer(name);if(st.total<=0)return '<span class="muted">-</span>';const complete=st.paid>=st.total;return `<span class="fine-balance ${complete?'complete':''}"><span class="paid">${money(st.paid)}</span>/<span class="total">${money(st.total)}</span></span>`}
-function isAdmin(){return currentUser&&admins.includes(currentUser.name)}
-function show(section,btn){if(!isAdmin())section='spelersview';$$('.section').forEach(s=>s.classList.remove('active'));$(section).classList.add('active');$$('.nav button').forEach(b=>b.classList.remove('active'));const navBtn=btn||document.querySelector(`.nav button[data-section="${section}"]`);if(navBtn)navBtn.classList.add('active');if(section==='wedstrijd')renderLineup();if(section==='training')renderTraining();if(section==='beloningen')renderRewards();if(section==='boetepot')renderFines();if(section==='kalender')renderCalendar();if(section==='spelersview')renderPlayerView();renderDashboard();}
+const $=id=>document.getElementById(id),$$=s=>Array.from(document.querySelectorAll(s));
+const basePlayers=[['1','Rowan Logher','Keeper'],['2','Aslan Cadirci','Verdediger'],['3','Benjamin Blom','Verdediger'],['4','Yannick Hamstra','Verdediger'],['5','Koen van Poelje','Verdediger'],['6','Stijn Broersma','Middenveld'],['7','Mirko Ćutunić','Aanvaller'],['8','Damjan Tihomirovic','Middenveld'],['9','Jan Jaap ten Brinke','Aanvaller'],['10','Kai Boelens','Middenveld'],['11','Roël mabiala','Aanvaller'],['12','Thyger Olbina','Verdediger'],['14','Kaua Vinicius','Aanvaller'],['15','Amir Nabi','Aanvaller'],['17','Kostja Savchuk','Middenveld']];
+let players=basePlayers.map(x=>({nr:x[0],name:x[1],pos:x[2],tp:0,ta:0,jokers:5,jokerHistory:[],minutes:0,matches:0,goals:0,assists:0,rewards:[]}));
+const admins=['Dennis Melkert','Niovanni Cleofa'],adminPass={'Dennis Melkert':'WSV2026!','Niovanni Cleofa':'WSV2026!'};
+let rules=[['Shirt vergeten',2.5],['Verkeerd tenue op training',2.5],['Gele kaart voor praten tegen de scheids',2]];
+let current=null,pw={},calendar={},fines=[],lineup={},calDate=new Date(2026,5,1);
+const seasonStart=new Date(2026,5,1),seasonEnd=new Date(2027,5,1);
+const money=n=>'€'+Number(n||0).toFixed(2).replace('.',','), esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+function save(){localStorage.setItem('wsvCoachAppStableFinal',JSON.stringify({players,pw,calendar,fines,lineup,current,calDate:calDate.toISOString(),rules}))}
+function load(){try{let s=JSON.parse(localStorage.getItem('wsvCoachAppStableFinal')||'{}');if(s.players)players=s.players;pw=s.pw||{};calendar=s.calendar||{};fines=s.fines||[];lineup=s.lineup||{};current=s.current||null;if(s.calDate)calDate=new Date(s.calDate);if(s.rules)rules=s.rules;[...admins,...players.map(p=>p.name)].forEach(n=>{if(!pw[n])pw[n]=adminPass[n]||'Welkom123!'})}catch(e){console.error(e)}}
+function isAdmin(){return current&&admins.includes(current.name)}
+function paidTotal(){return fines.filter(f=>f.paid==='Ja').reduce((a,b)=>a+b.amount,0)}
 function jokerOver(p){return Math.max(0,p.jokers-p.jokerHistory.length)}
-function renderPasswordManager(){
-  const card=$('passwordManagerCard');
-  if(!card)return;
-  if(!isAdmin()){
-    card.classList.add('hidden');
-    return;
-  }
-  card.classList.remove('hidden');
-  const users=[...new Set([...admins,...players.map(p=>p.name)])];
-  $('passwordManager').innerHTML=users.map(name=>`<div class="bench"><strong>${esc(name)}</strong><button class="button secondary reset-password-btn" data-user="${esc(name)}" style="float:right">Reset wachtwoord</button></div>`).join('');
-}
-function renderDashboard(){$('dashPlayers').textContent=players.length;$('dashPresent').textContent=$('presentCount')?.textContent||players.length;$('dashFineTotal').textContent=money(paidFineTotal());renderPasswordManager()}
-function renderRules(){const html=fineRules.map(r=>`<div class="fine-rule"><strong>${money(r.amount)}</strong><br>${esc(r.reason)}</div>`).join('');if($('fineRules'))$('fineRules').innerHTML=html;if($('playerFineRules'))$('playerFineRules').innerHTML=html}
-function renderSelection(){if(!$('selectionBody'))return;$('selectionBody').innerHTML=players.map((p,i)=>`<tr><td>${p.nr}</td><td><span class="player-chip">${esc(p.name)}</span></td><td>${esc(p.pos)}</td><td><strong>${p.tp}</strong></td><td><strong>${p.ta}</strong></td><td><span class="pill ${jokerOver(p)<=0?'bad':jokerOver(p)<=2?'warn':'ok'}">${jokerOver(p)}</span></td><td><strong>${p.minutes}</strong></td><td><input class="small minInput" data-i="${i}" type="number"></td><td><button class="button secondary saveMin" data-i="${i}">Opslaan</button></td><td>${p.matches}</td><td>${p.starts}</td><td>${p.subs}</td><td><input class="stat" data-i="${i}" data-k="yellow" type="number" value="${p.yellow}"></td><td><input class="stat" data-i="${i}" data-k="red" type="number" value="${p.red}"></td><td><input class="stat" data-i="${i}" data-k="goals" type="number" value="${p.goals}"></td><td><input class="stat" data-i="${i}" data-k="assists" type="number" value="${p.assists}"></td><td>${p.rewards.length}</td><td>${fineBalanceHtml(p.name)}</td></tr>`).join('')}
-function selectedExcept(key){const f=$('formationSelect').value;return Object.keys(lineup).filter(k=>k.startsWith(f+'-')&&k!==key&&lineup[k]).map(k=>lineup[k])}
-function options(selected,key){const taken=selectedExcept(key);return '<option value="">Kies speler</option>'+players.map(p=>`<option value="${esc(p.name)}" ${selected===p.name?'selected':''} ${taken.includes(p.name)?'disabled':''}>${p.nr}. ${esc(p.name)}</option>`).join('')}
-function renderLineup(){const f=$('formationSelect').value;$('lineupField').innerHTML=formations[f].map((slot,i)=>{const key=f+'-'+i;return `<div class="dot" style="left:${slot[1]}%;top:${slot[2]}%"><select class="lineSelect" data-key="${key}"><option value="">${slot[0]}</option>${options(lineup[key]||'',key)}</select></div>`}).join('');renderSquad()}
-function renderSquad(){let h='';players.forEach(p=>{if(!available[p.name])available[p.name]={playing:'Meedoen',reason:'-'};const a=available[p.name];h+=`<div class="bench"><strong>${p.nr}. ${esc(p.name)}</strong><br><span class="muted">${esc(p.pos)}</span><div class="form-grid" style="margin-top:8px"><select class="matchPlay" data-name="${esc(p.name)}"><option ${a.playing==='Meedoen'?'selected':''}>Meedoen</option><option ${a.playing==='Doet niet mee'?'selected':''}>Doet niet mee</option></select><select class="matchReason" data-name="${esc(p.name)}"><option>-</option><option ${a.reason==='Ziek'?'selected':''}>Ziek</option><option ${a.reason==='Geblesseerd'?'selected':''}>Geblesseerd</option><option ${a.reason==='Schorsing'?'selected':''}>Schorsing</option><option ${a.reason==='Overig'?'selected':''}>Overig</option></select></div></div>`});$('matchSquadList').innerHTML=h}
-function saveMatch(){const date=$('matchDate').value;if(!date){$('matchNote').textContent='Kies eerst een datum.';return}const f=$('formationSelect').value;const starters=Object.keys(lineup).filter(k=>k.startsWith(f+'-')&&lineup[k]).map(k=>lineup[k]);const unavailable=players.filter(p=>available[p.name]?.playing==='Doet niet mee').map(p=>({player:p.name,reason:available[p.name].reason||'-'}));calendar[date]=(calendar[date]||[]).filter(x=>x.type!=='Wedstrijd');calendar[date].push({type:'Wedstrijd',opponent:$('matchOpponent').value||'Wedstrijd',formation:f,starters,unavailable});players.forEach(p=>{if(!unavailable.some(u=>u.player===p.name)){p.matches++;if(starters.includes(p.name))p.starts++;else p.subs++;}});$('matchNote').textContent='Wedstrijd opgeslagen.';renderSelection();renderCalendar();renderPlayerView();saveLocal();}
-function renderTraining(){if(!$('trainingBody'))return;$('trainingBody').innerHTML=players.map((p,i)=>`<tr data-i="${i}"><td>${esc(p.name)}</td><td><select class="trStatus"><option>Aanwezig</option><option>Afwezig</option></select></td><td><select class="trReason"><option>-</option><option>Ziek</option><option>Geblesseerd</option><option>Joker ingezet</option><option>School / werk</option><option>Overig</option></select></td><td><input class="trJoker" type="checkbox"></td><td><span class="pill ${jokerOver(p)<=2?'warn':'ok'}">${jokerOver(p)}</span></td></tr>`).join('');updateTrainingCount()}
-function updateTrainingCount(){const rows=$$('#trainingBody tr');const present=rows.filter(r=>r.querySelector('.trStatus').value==='Aanwezig').length;const absent=rows.length-present;const jok=rows.filter(r=>r.querySelector('.trJoker').checked).length;$('presentCount').textContent=present;$('absentCount').textContent=absent;$('jokerUsedCount').textContent='Waarvan '+jok+' joker ingezet';renderDashboard()}
-function saveTraining(){const date=$('trainingDate').value;if(!date){$('trainingNote').textContent='Kies eerst een datum.';return}const records=$$('#trainingBody tr').map(r=>{const p=players[Number(r.dataset.i)];const status=r.querySelector('.trStatus').value;const joker=r.querySelector('.trJoker').checked;const reason=joker?'Joker ingezet':r.querySelector('.trReason').value;if(status==='Aanwezig')p.tp++;else p.ta++;if(joker&&!p.jokerHistory.some(j=>j.date===date))p.jokerHistory.push({date,reason});return{player:p.name,status,reason,joker}});calendar[date]=(calendar[date]||[]).filter(x=>x.type!=='Training');calendar[date].push({type:'Training',records});$('trainingNote').textContent='Training opgeslagen.';renderJokers();renderSelection();renderCalendar();saveLocal()}
-function renderJokers(){const hist=[];players.forEach(p=>p.jokerHistory.forEach(j=>hist.push({player:p.name,...j})));$('jokerHistory').innerHTML=hist.length?hist.map(j=>`<div class="bench"><strong>${esc(j.player)}</strong><br>${esc(j.date)} • ${esc(j.reason)}</div>`).join(''):'<div class="bench muted">Nog geen jokers.</div>'}
-function addRewardRow(){const div=document.createElement('div');div.className='row-3';div.innerHTML=`<select class="rewardPlayer"><option value="">Kies speler</option>${players.map((p,i)=>`<option value="${i}">${p.nr}. ${esc(p.name)}</option>`).join('')}</select><input class="rewardReason" placeholder="Waarom verdiend?"><button class="button secondary removeReward">Verwijder</button>`;$('rewardBody').appendChild(div);updateRewardTotal()}
-function renderRewards(){if(!$('rewardBody').children.length)addRewardRow();updateRewardTotal()}
-function updateRewardTotal(){$('rewardTotal').textContent=$$('.rewardPlayer').filter(s=>s.value!=='').length}
-function clearRewards(){$('rewardBody').innerHTML='';addRewardRow()}
-function saveRewards(){const date=$('rewardDate').value;if(!date){$('rewardNote').textContent='Kies eerst een datum.';return}const records=$$('.row-3').map(row=>{const idx=row.querySelector('.rewardPlayer').value;return idx===''?null:{player:players[Number(idx)].name,reason:row.querySelector('.rewardReason').value||'-'}}).filter(Boolean);records.forEach(r=>{const p=players.find(x=>x.name===r.player);if(p)p.rewards.push({date,reason:r.reason})});calendar[date]=(calendar[date]||[]).filter(x=>x.type!=='Kruisjes');calendar[date].push({type:'Kruisjes',records});$('rewardNote').textContent=records.length+' kruisje(s) opgeslagen.';renderSelection();renderCalendar();saveLocal()}
-function addFineRow(f={player:'',reason:fineRules[0].reason,amount:fineRules[0].amount,paid:'Nee'}){const div=document.createElement('div');div.className='fine-row';div.innerHTML=`<select class="finePlayer"><option value="">Kies speler</option>${players.map(p=>`<option value="${esc(p.name)}" ${f.player===p.name?'selected':''}>${p.nr}. ${esc(p.name)}</option>`).join('')}</select><select class="fineReason">${fineRules.map(r=>`<option value="${esc(r.reason)}" data-amount="${r.amount}" ${f.reason===r.reason?'selected':''}>${esc(r.reason)}</option>`).join('')}</select><input class="fineAmount" type="number" step="0.50" min="0" value="${f.amount}"><select class="finePaid"><option ${f.paid==='Nee'?'selected':''}>Nee</option><option ${f.paid==='Ja'?'selected':''}>Ja</option></select><button class="button secondary removeFine">Weg</button>`;$('fineBody').appendChild(div);updateFineOverview()}
-function readFineRows(){return $$('.fine-row').map(r=>({player:r.querySelector('.finePlayer').value,reason:r.querySelector('.fineReason').value,amount:Number(r.querySelector('.fineAmount').value||0),paid:r.querySelector('.finePaid').value})).filter(f=>f.player&&f.amount>0)}
-function renderFines(){$('fineBody').innerHTML='';if(fines.length)fines.forEach(addFineRow);else addFineRow();updateFineOverview();renderRules()}
-function updateFineOverview(){const list=readFineRows();$('fineTotal').textContent=money(list.filter(f=>f.paid==='Ja').reduce((s,f)=>s+f.amount,0));$('fineOpen').textContent=list.filter(f=>f.paid!=='Ja').length;$('fineCount').textContent=list.length;$('fineOverviewBody').innerHTML=list.length?list.map((f,i)=>`<tr><td>${esc(f.player)}<br>${fineBalanceHtml(f.player)}</td><td>${esc(f.reason)}</td><td><strong>${money(f.amount)}</strong></td><td><button class="paid-toggle ${f.paid==='Ja'?'ok':''}" data-fine-index="${i}">${esc(f.paid)}</button></td><td><button class="trash-btn" data-delete-fine="${i}">🗑</button></td></tr>`).join(''):'<tr><td colspan="5" class="muted">Nog geen boetes.</td></tr>';renderSelection();renderDashboard()}
-function saveFines(){fines=readFineRows();$('fineNote').textContent=fines.length+' boete(s) opgeslagen. Alleen betaalde boetes tellen mee.';updateFineOverview();renderPlayerView();saveLocal()}
-function clearFines(){fines=[];$('fineBody').innerHTML='';addFineRow();$('fineNote').textContent='Boetepot leeggemaakt. Klik op opslaan om dit te bewaren.';updateFineOverview();saveLocal()}
-function renderCalendar(){
-  if(calDate<seasonStart)calDate=new Date(seasonStart);
-  if(calDate>seasonEnd)calDate=new Date(seasonEnd);
-  const y=calDate.getFullYear(),m=calDate.getMonth();
-  const months=['Januari','Februari','Maart','April','Mei','Juni','Juli','Augustus','September','Oktober','November','December'];
-  $('calendarTitle').textContent=months[m]+' '+y;
-  const first=new Date(y,m,1),days=new Date(y,m+1,0).getDate(),off=(first.getDay()+6)%7;
-  let h=['Ma','Di','Wo','Do','Vr','Za','Zo'].map(d=>`<div class="day-name">${d}</div>`).join('');
-  for(let i=0;i<off;i++)h+='<div></div>';
-  for(let d=1;d<=days;d++){
-    const key=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const dayDate=new Date(y,m,d);
-    if(dayDate<seasonStart || dayDate>seasonEnd)continue;
-    const items=calendar[key]||[];
-    h+=`<div class="day" data-date="${key}"><strong>${d}</strong><br>${items.map(it=>`<span class="event">${it.type}</span>`).join('')}</div>`;
-  }
-  $('calendarGrid').innerHTML=h;
-}
-function details(date){const items=calendar[date]||[];$('calendarDetails').innerHTML='<h3>'+esc(date)+'</h3>'+(items.length?items.map(it=>`<div class="bench"><strong>${it.type}</strong><br>${esc(it.opponent||'')} ${it.records?it.records.length+' item(s)':''}</div>`).join(''):'<p class="muted">Geen gegevens.</p>')}
-function calendarItems(){return Object.entries(calendar).flatMap(([date,items])=>items.map(it=>({date,...it}))).sort((a,b)=>a.date.localeCompare(b.date))}
-function renderPlayerProgram(){const box=$('playerProgramStrip');if(!box)return;const today=new Date().toISOString().slice(0,10);let items=calendarItems().filter(it=>it.date>=today).slice(0,5);if(!items.length)items=calendarItems().slice(-5);box.innerHTML=items.length?items.map(it=>{const isToday=it.date===today;const title=it.type==='Wedstrijd'?(it.opponent||'Wedstrijd'):it.type;return `<div class="program-item ${isToday?'today':''}"><div class="program-date">${isToday?'Vandaag':esc(it.date)}</div><div class="program-title">${esc(title)}</div><span class="program-type">${esc(it.type)}</span></div>`}).join(''):'<div class="program-item today"><div class="program-date">Geen programma</div><div class="program-title">Nog niets gepland</div><span class="program-type">WSV</span></div>'}
-function renderPlayerView(){renderPlayerProgram();const matches=Object.entries(calendar).flatMap(([date,items])=>items.filter(i=>i.type==='Wedstrijd').map(i=>({date,...i}))).sort((a,b)=>a.date.localeCompare(b.date));const next=matches[matches.length-1];if(next){$('playerNextMatch').textContent=next.date+' • '+next.opponent;$('playerFormation').textContent=next.formation==='433'?'1-4-3-3':next.formation==='4231'?'1-4-2-3-1':'1-3-4-3';$('playerLineupField').innerHTML=(formations[next.formation]||[]).map((slot,i)=>`<div class="dot" style="left:${slot[1]}%;top:${slot[2]}%"><div>${slot[0]}<br>${esc(next.starters[i]||'-')}</div></div>`).join('')}else{$('playerNextMatch').textContent='Nog geen wedstrijd opgeslagen.';$('playerFormation').textContent='-';$('playerLineupField').innerHTML='<p class="muted" style="padding:20px">Nog geen opstelling ingevuld.</p>'}$('playerTacticDefending').textContent=$('tacticDef').value||'Nog niet ingevuld.';$('playerTacticAttacking').textContent=$('tacticAtt').value||'Nog niet ingevuld.';$('playerFineTotal').textContent=money(paidFineTotal());$('playerFineTable').innerHTML=fines.length?fines.map(f=>`<tr><td>${esc(f.player)}</td><td>${esc(f.reason)}</td><td><strong>${money(f.amount)}</strong></td><td><span class="pill ${f.paid==='Ja'?'ok':'warn'}">${esc(f.paid)}</span></td></tr>`).join(''):'<tr><td colspan="4" class="muted">Nog geen boetes.</td></tr>';$('playerSelectionTable').innerHTML=players.map(p=>`<tr><td>${p.nr}</td><td>${esc(p.name)}</td><td>${esc(p.pos)}</td><td>${p.matches}</td><td>${p.goals}</td><td>${p.assists}</td><td>${p.rewards.length}</td><td><span class="pill ${jokerOver(p)<=0?'bad':jokerOver(p)<=2?'warn':'ok'}">${jokerOver(p)}</span></td><td>${fineBalanceHtml(p.name)}</td></tr>`).join('');renderRules()}
-function fillLogin(){
-  const list=[...admins,...players.map(p=>p.name)];
-  const unique=[...new Set(list)];
-  $('loginName').innerHTML=unique.map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('');
-}
-
-function applyRole(){
-  if(!currentUser)return;
-  $('loginScreen').classList.add('hidden');
-  $('appShell').classList.remove('hidden');
-  $('userBar').classList.remove('hidden');
-  $('currentUserText').textContent=currentUser.name+(isAdmin()?' • beheer':' • speler');
-  if(isAdmin()){
-    $$('.nav button').forEach(b=>b.classList.remove('hidden'));
-    show('dashboard');
-  }else{
-    $$('.nav button').forEach(b=>{if(b.dataset.section==='spelersview')b.classList.remove('hidden');else b.classList.add('hidden')});
-    show('spelersview');
-  }
-}
-
-function logout(){
-  currentUser=null;
-  saveLocal();
-  $('appShell').classList.add('hidden');
-  $('userBar').classList.add('hidden');
-  $('loginScreen').classList.remove('hidden');
-  $('loginPassword').value='';
-}
-
-function doLogin(){
-  const name=$('loginName').value;
-  const password=$('loginPassword').value;
-  const expected=userPasswords[name] || 'Welkom123!';
-
-  if(password!==expected){
-    $('loginNote').textContent='Onjuist wachtwoord.';
-    return;
-  }
-
-  if(password==='Welkom123!' && !admins.includes(name)){
-    const newPassword=prompt('Kies nu je eigen wachtwoord (minimaal 4 tekens):');
-    if(!newPassword || newPassword.trim().length < 4){
-      $('loginNote').textContent='Wachtwoord moet minimaal 4 tekens bevatten.';
-      return;
-    }
-    userPasswords[name]=newPassword.trim();
-  }
-
-  $('loginNote').textContent='';
-  $('loginPassword').value='';
-  currentUser={name};
-  saveLocal();
-  applyRole();
-}
-
-function bind(){
-  fillLogin();
-  $('loginBtn').onclick=doLogin;
-  $('loginPassword').onkeydown=e=>{if(e.key==='Enter')doLogin()};
-  $('logoutBtn').onclick=logout;
-  $$('.nav button').forEach(b=>b.onclick=()=>show(b.dataset.section,b));
-
-  $('saveMatchBtn').onclick=saveMatch;
-  $('saveTrainingBtn').onclick=saveTraining;
-  $('saveRewardBtn').onclick=saveRewards;
-  $('addRewardBtn').onclick=addRewardRow;
-  $('clearRewardBtn').onclick=clearRewards;
-  $('saveFineBtn').onclick=saveFines;
-  $('addFineBtn').onclick=()=>addFineRow();
-  $('refreshSelection').onclick=renderSelection;
-  $('formationSelect').onchange=renderLineup;
-  $('prevMonth').onclick=()=>{calDate.setMonth(calDate.getMonth()-1);if(calDate<seasonStart)calDate=new Date(seasonStart);renderCalendar();saveLocal()};
-  $('nextMonth').onclick=()=>{calDate.setMonth(calDate.getMonth()+1);if(calDate>seasonEnd)calDate=new Date(seasonEnd);renderCalendar();saveLocal()};
-
-  document.oninput=e=>{
-    const t=e.target;
-    if(t.classList.contains('fineAmount'))updateFineOverview();
-    if(t.id==='tacticDef'||t.id==='tacticAtt')saveLocal();
-  };
-
-  document.onchange=e=>{
-    const t=e.target;
-    if(t.classList.contains('lineSelect')){lineup[t.dataset.key]=t.value;renderLineup();saveLocal()}
-    if(t.classList.contains('matchPlay')){available[t.dataset.name]=available[t.dataset.name]||{};available[t.dataset.name].playing=t.value;saveLocal()}
-    if(t.classList.contains('matchReason')){available[t.dataset.name]=available[t.dataset.name]||{};available[t.dataset.name].reason=t.value;saveLocal()}
-    if(t.classList.contains('trStatus')||t.classList.contains('trJoker'))updateTrainingCount();
-    if(t.classList.contains('rewardPlayer'))updateRewardTotal();
-    if(t.classList.contains('fineReason')){const row=t.closest('.fine-row');row.querySelector('.fineAmount').value=t.selectedOptions[0].dataset.amount;updateFineOverview()}
-    if(t.classList.contains('finePlayer')||t.classList.contains('finePaid'))updateFineOverview();
-    if(t.classList.contains('stat')){players[Number(t.dataset.i)][t.dataset.k]=Number(t.value||0);renderPlayerView();saveLocal()}
-  };
-
-  document.onclick=e=>{
-    const t=e.target;
-
-    if(t.classList.contains('saveMin')){
-      const i=Number(t.dataset.i);
-      const inp=document.querySelector('.minInput[data-i="'+i+'"]');
-      players[i].minutes+=Number(inp.value||0);
-      inp.value='';
-      renderSelection();
-      saveLocal();
-      return;
-    }
-
-    if(t.classList.contains('removeReward')){
-      t.closest('.row-3').remove();
-      updateRewardTotal();
-      return;
-    }
-
-    if(t.classList.contains('reset-password-btn')){
-      const user=t.dataset.user;
-      userPasswords[user]='Welkom123!';
-      saveLocal();
-      alert('Wachtwoord van '+user+' is gereset naar Welkom123!.');
-      return;
-    }
-
-    if(t.classList.contains('removeFine')){
-      t.closest('.fine-row').remove();
-      updateFineOverview();
-      return;
-    }
-
-    if(t.classList.contains('trash-btn')){
-      const i=Number(t.dataset.deleteFine);
-      fines=readFineRows();
-      fines.splice(i,1);
-      renderFines();
-      renderPlayerView();
-      saveLocal();
-      return;
-    }
-
-    if(t.classList.contains('paid-toggle')){
-      const i=Number(t.dataset.fineIndex);
-      const paid=$$('.fine-row')[i]?.querySelector('.finePaid');
-      if(paid){
-        paid.value=paid.value==='Ja'?'Nee':'Ja';
-        fines=readFineRows();
-        updateFineOverview();
-        renderPlayerView();
-        saveLocal();
-      }
-      return;
-    }
-
-    const day=t.closest('.day');
-    if(day&&day.dataset.date)details(day.dataset.date);
-  };
-}
-
-function safeStart(){
-  loadLocal();
-  bind();
-  renderRules();
-  renderSelection();
-  renderLineup();
-  renderTraining();
-  renderJokers();
-  renderRewards();
-  renderFines();
-  renderCalendar();
-  renderPlayerView();
-  renderDashboard();
-
-  if(currentUser&&currentUser.name){
-    applyRole();
-  }else{
-    $('loginScreen').classList.remove('hidden');
-    $('appShell').classList.add('hidden');
-    $('userBar').classList.add('hidden');
-  }
-}
-
-document.addEventListener('DOMContentLoaded',safeStart);
-})();
+function fstats(n){let own=fines.filter(f=>f.player===n),t=own.reduce((a,b)=>a+b.amount,0),p=own.filter(f=>f.paid==='Ja').reduce((a,b)=>a+b.amount,0);return{t,p}}
+function bal(n){let s=fstats(n);if(!s.t)return'<span class=muted>-</span>';let c=s.p>=s.t?'complete':'';return `<span class="${c}"><span class=paid>${money(s.p)}</span>/<span class=total>${money(s.t)}</span></span>`}
+function login(){let code=$('loginCode').value.trim().toUpperCase(),pass=$('loginPass').value;if(!code){$('loginMsg').textContent='Vul rugnummer of T in.';return}let n='';if(code==='T'){let found=admins.find(a=>pass===(pw[a]||adminPass[a]));if(!found){$('loginMsg').textContent='Onjuist trainerwachtwoord.';return}n=found}else{let p=players.find(x=>String(x.nr)===code);if(!p){$('loginMsg').textContent='Onbekend rugnummer.';return}n=p.name;if(pass!==(pw[n]||'Welkom123!')){$('loginMsg').textContent='Onjuist wachtwoord.';return}if(pass==='Welkom123!'){let np=prompt('Kies eigen wachtwoord minimaal 4 tekens');if(!np||np.length<4)return alert('Te kort wachtwoord');pw[n]=np}}current={name:n};$('login').classList.add('hidden');$('app').classList.remove('hidden');$('loginCode').value='';$('loginPass').value='';$('loginMsg').textContent='';save();show(isAdmin()?'dashboard':'spelers')}
+function logout(){current=null;save();$('app').classList.add('hidden');$('login').classList.remove('hidden');$('loginCode').focus()}
+function show(id){if(!isAdmin())id='spelers';$$('.section').forEach(s=>s.classList.remove('active'));$(id).classList.add('active');$$('#nav button').forEach(b=>b.classList.toggle('active',b.dataset.sec===id));$$('#nav button').forEach(b=>b.classList.toggle('hidden',!isAdmin()&&b.dataset.sec!=='spelers'));$('userText').textContent=(current?.name||'')+(isAdmin()?' • beheer':' • speler');renderAll()}
+function renderRules(){let admin=rules.map((r,i)=>`<div class=fine-rule><strong>${money(r[1])}</strong><br>${esc(r[0])}<br><br><button class="btn2 delRule" data-i="${i}">🗑 Verwijder</button></div>`).join(''),player=rules.map(r=>`<div class=fine-rule><strong>${money(r[1])}</strong><br>${esc(r[0])}</div>`).join('');$('rules').innerHTML=isAdmin()?admin:player;$('playerRules').innerHTML=player}
+function renderDash(){$('mPlayers').textContent=players.length;$('mFines').textContent=money(paidTotal());$('mPresent').textContent=$('present')?.textContent||players.length;$('pwList').innerHTML=[...new Set([...admins,...players.map(p=>p.name)])].map(n=>`<div class=bench><b>${esc(n)}</b><button class="btn2 reset" data-user="${esc(n)}" style="float:right">Reset wachtwoord</button></div>`).join('')}
+function renderSelection(){$('selBody').innerHTML=players.map((p,i)=>`<tr><td>${p.nr}</td><td>${esc(p.name)}</td><td>${p.pos}</td><td>${p.tp}</td><td>${p.ta}</td><td><span class="pill ${jokerOver(p)<=0?'bad':jokerOver(p)<=2?'warn':'ok'}">${jokerOver(p)}</span></td><td>${p.minutes}</td><td><input class=min data-i=${i} type=number></td><td><button class="btn2 savemin" data-i=${i}>Opslaan</button></td><td>${p.matches}</td><td><input class=stat data-i=${i} data-k=goals type=number value=${p.goals}></td><td><input class=stat data-i=${i} data-k=assists type=number value=${p.assists}></td><td>${p.rewards.length}</td><td>${bal(p.name)}</td></tr>`).join('')}
+function renderTraining(){$('trBody').innerHTML=players.map((p,i)=>`<tr data-i=${i}><td>${esc(p.name)}</td><td><select class=trst><option>Aanwezig</option><option>Afwezig</option></select></td><td><select class=trrs><option>-</option><option>Ziek</option><option>Geblesseerd</option><option>Joker ingezet</option><option>School / werk</option><option>Overig</option></select></td><td><input class=trjk type=checkbox></td><td><span class="pill ${jokerOver(p)<=0?'bad':jokerOver(p)<=2?'warn':'ok'}">${jokerOver(p)}</span></td></tr>`).join('');countTr()}
+function countTr(){let r=$$('#trBody tr'),p=r.filter(x=>x.querySelector('.trst').value==='Aanwezig').length;$('present').textContent=p;$('absent').textContent=r.length-p}
+function saveTraining(){let d=$('trDate').value;if(!d)return alert('Kies datum');let rec=$$('#trBody tr').map(r=>{let p=players[+r.dataset.i],st=r.querySelector('.trst').value,j=r.querySelector('.trjk').checked,rs=j?'Joker ingezet':r.querySelector('.trrs').value;if(st==='Aanwezig')p.tp++;else p.ta++;if(j&&!p.jokerHistory.some(x=>x.date===d))p.jokerHistory.push({date:d});return{player:p.name,status:st,reason:rs,joker:j}});calendar[d]=(calendar[d]||[]).filter(x=>x.type!=='Training');calendar[d].push({type:'Training',records:rec});save();renderAll()}
+function renderRewards(){if(!$('rewardRows').children.length)addReward()}
+function addReward(){$('rewardRows').insertAdjacentHTML('beforeend',`<div class=rewardrow><select class=rw><option value="">Kies speler</option>${players.map((p,i)=>`<option value=${i}>${p.nr}. ${esc(p.name)}</option>`).join('')}</select><input class=rr placeholder="Waarom?"><button class="btn2 remrow">Weg</button></div>`)}
+function saveRewards(){let d=$('rewardDate').value;if(!d)return alert('Kies datum');$$('.rewardrow').forEach(r=>{let i=r.querySelector('.rw').value;if(i!=='')players[+i].rewards.push({date:d,reason:r.querySelector('.rr').value||'-'})});save();renderAll()}
+function renderLineup(){let pos=[['1',50,90],['5',22,72],['4',41,72],['3',59,72],['2',78,72],['8',35,46],['6',50,56],['10',65,46],['11',25,25],['9',50,18],['7',75,25]];$('lineup').innerHTML=pos.map((p,i)=>`<p>${p[0]} <select class=line data-k=${i}><option></option>${players.map(x=>`<option ${lineup[i]===x.name?'selected':''}>${esc(x.name)}</option>`).join('')}</select></p>`).join('')}
+function saveMatch(){let d=$('matchDate').value;if(!d)return alert('Kies datum');let starters=Object.values(lineup).filter(Boolean);calendar[d]=(calendar[d]||[]).filter(x=>x.type!=='Wedstrijd');calendar[d].push({type:'Wedstrijd',opponent:$('opp').value||'Wedstrijd',starters});starters.forEach(n=>{let p=players.find(x=>x.name===n);if(p)p.matches++});save();renderAll()}
+function renderFines(){$('fineRows').innerHTML=fines.length?fines.map(f=>fineRow(f)).join(''):fineRow();updateFines();renderRules()}
+function fineRow(f={}){let reason=f.reason||rules[0]?.[0]||'Boete',amount=f.amount??rules[0]?.[1]??0;return `<div class=row><select class=fp><option value="">Kies speler</option>${players.map(p=>`<option ${f.player===p.name?'selected':''}>${esc(p.name)}</option>`).join('')}</select><select class=fr>${rules.map(r=>`<option data-a=${r[1]} ${reason===r[0]?'selected':''}>${esc(r[0])}</option>`).join('')}</select><input class=fa type=number step=.5 value="${amount}"><select class=fd><option ${f.paid!=='Ja'?'selected':''}>Nee</option><option ${f.paid==='Ja'?'selected':''}>Ja</option></select><button class="btn2 removeFine">Weg</button></div>`}
+function readFines(){return $$('.row').map(r=>({player:r.querySelector('.fp').value,reason:r.querySelector('.fr').value,amount:+r.querySelector('.fa').value||0,paid:r.querySelector('.fd').value})).filter(f=>f.player&&f.amount)}
+function updateFines(){let l=readFines();$('fineTotal').textContent=money(l.filter(f=>f.paid==='Ja').reduce((a,b)=>a+b.amount,0));$('fineOpen').textContent=l.filter(f=>f.paid!=='Ja').length;$('fineCount').textContent=l.length;$('fineBody').innerHTML=l.length?l.map((f,i)=>`<tr><td>${esc(f.player)}<br>${bal(f.player)}</td><td>${esc(f.reason)}</td><td>${money(f.amount)}</td><td><button class="paid-toggle ${f.paid==='Ja'?'ok':''}" data-i=${i}>${f.paid}</button></td><td><button class=trash data-i=${i}>🗑</button></td></tr>`).join(''):'<tr><td colspan=5 class=muted>Geen boetes.</td></tr>';renderSelection()}
+function saveFines(){fines=readFines();save();renderAll()}
+function renderCal(){if(calDate<seasonStart)calDate=new Date(seasonStart);if(calDate>seasonEnd)calDate=new Date(seasonEnd);let y=calDate.getFullYear(),m=calDate.getMonth(),months=['Januari','Februari','Maart','April','Mei','Juni','Juli','Augustus','September','Oktober','November','December'];$('calTitle').textContent=months[m]+' '+y;let first=new Date(y,m,1),days=new Date(y,m+1,0).getDate(),off=(first.getDay()+6)%7,h=['Ma','Di','Wo','Do','Vr','Za','Zo'].map(d=>`<div class=day-name>${d}</div>`).join('');for(let i=0;i<off;i++)h+='<div></div>';for(let d=1;d<=days;d++){let k=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`,it=calendar[k]||[];h+=`<div class=day data-date=${k}><b>${d}</b><br>${it.map(x=>`<span class=event>${x.type}</span>`).join('')}</div>`}$('calGrid').innerHTML='<div class=calendar>'+h+'</div>'}
+function items(){return Object.entries(calendar).flatMap(([date,a])=>a.map(x=>({date,...x}))).sort((a,b)=>a.date.localeCompare(b.date))}
+function renderPlayer(){let today=new Date().toISOString().slice(0,10),it=items().filter(x=>x.date>=today).slice(0,5);$('program').innerHTML=(it.length?it:[{type:'WSV',date:today,opponent:'Nog niets gepland'}]).map(x=>`<div class="program-item ${x.date===today?'today':''}"><div class=muted>${x.date===today?'Vandaag':x.date}</div><div class=title>${esc(x.opponent||x.type)}</div><span class=event>${x.type}</span></div>`).join('');$('nextMatch').textContent=(items().find(x=>x.type==='Wedstrijd')||{}).opponent||'Nog geen wedstrijd';$('playerFineTotal').textContent=money(paidTotal());$('playerTable').innerHTML=players.map(p=>`<tr><td>${p.nr}</td><td>${esc(p.name)}</td><td>${p.pos}</td><td>${p.matches}</td><td>${p.goals}</td><td>${p.assists}</td><td>${p.rewards.length}</td><td><span class="pill ${jokerOver(p)<=0?'bad':jokerOver(p)<=2?'warn':'ok'}">${jokerOver(p)}</span></td><td>${bal(p.name)}</td></tr>`).join('');$('playerFineTable').innerHTML=fines.map(f=>`<tr><td>${esc(f.player)}</td><td>${esc(f.reason)}</td><td>${money(f.amount)}</td><td>${f.paid}</td></tr>`).join('')||'<tr><td colspan=4 class=muted>Geen boetes.</td></tr>';$('playerRules').innerHTML=rules.map(r=>`<div class=fine-rule><strong>${money(r[1])}</strong><br>${esc(r[0])}</div>`).join('')}
+function renderAll(){renderDash();renderSelection();renderLineup();renderTraining();renderRewards();renderFines();renderCal();renderPlayer()}
+function details(date){let arr=calendar[date]||[];$('calDetails').innerHTML='<h3>'+date+'</h3>'+arr.map(x=>`<div class=bench><b>${x.type}</b><br>${esc(x.opponent||'')}</div>`).join('')}
+document.addEventListener('DOMContentLoaded',()=>{load();renderAll();$('loginBtn').onclick=login;$('loginCode').oninput=()=>{let c=$('loginCode').value.trim().toUpperCase();let p=players.find(x=>String(x.nr)===c);$('chosenUser').textContent=c==='T'?'Gekozen: Trainer/beheer':p?'Gekozen: '+p.name:'Nog geen gebruiker gekozen.'};$('loginCode').onkeydown=e=>{if(e.key==='Enter')$('loginPass').focus()};$('loginPass').onkeydown=e=>{if(e.key==='Enter')login()};$('logoutBtn').onclick=logout;$$('#nav button').forEach(b=>b.onclick=()=>show(b.dataset.sec));$('saveTraining').onclick=saveTraining;$('saveReward').onclick=saveRewards;$('addReward').onclick=addReward;$('saveMatch').onclick=saveMatch;$('addFine').onclick=()=>{$('fineRows').insertAdjacentHTML('beforeend',fineRow());updateFines()};$('saveFines').onclick=saveFines;$('prevM').onclick=()=>{calDate.setMonth(calDate.getMonth()-1);renderCal();save()};$('nextM').onclick=()=>{calDate.setMonth(calDate.getMonth()+1);renderCal();save()};document.body.onchange=e=>{let t=e.target;if(t.className==='trst'||t.className==='trjk')countTr();if(t.className==='fr'){t.closest('.row').querySelector('.fa').value=t.selectedOptions[0].dataset.a;updateFines()}if(['fp','fa','fd'].includes(t.className))updateFines();if(t.className==='line'){lineup[t.dataset.k]=t.value;save()}if(t.className==='stat'){players[+t.dataset.i][t.dataset.k]=+t.value;save();renderPlayer()}};document.body.onclick=e=>{let t=e.target;if(t.classList.contains('savemin')){let i=+t.dataset.i,inp=document.querySelector(`.min[data-i="${i}"]`);players[i].minutes+=+inp.value||0;inp.value='';save();renderSelection()}if(t.classList.contains('remrow'))t.closest('.rewardrow').remove();if(t.classList.contains('removeFine')){t.closest('.row').remove();updateFines()}if(t.classList.contains('paid-toggle')){let rows=$$('.row'),p=rows[+t.dataset.i].querySelector('.fd');p.value=p.value==='Ja'?'Nee':'Ja';fines=readFines();save();renderAll()}if(t.classList.contains('trash')){fines=readFines();fines.splice(+t.dataset.i,1);save();renderAll()}if(t.classList.contains('reset')){pw[t.dataset.user]=admins.includes(t.dataset.user)?adminPass[t.dataset.user]:'Welkom123!';save();alert('Wachtwoord gereset.')}if(t.classList.contains('delRule')){rules.splice(+t.dataset.i,1);if(!rules.length)rules=[['Nieuwe boete',1]];save();renderAll()}let day=t.closest('.day');if(day&&day.dataset.date)details(day.dataset.date)};if(current){$('login').classList.add('hidden');$('app').classList.remove('hidden');show(isAdmin()?'dashboard':'spelers')}else $('loginCode').focus();});
 </script>
 </body>
 </html>
